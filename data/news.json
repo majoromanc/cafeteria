@@ -1,0 +1,28 @@
+{
+    "noticias": [
+      {
+        "titulo": "El café mejora la concentración según un estudio",
+        "descripcion": "Un nuevo estudio revela que consumir café puede ayudar a mejorar la concentración y el rendimiento cognitivo.",
+        "categoria": "Salud",
+        "fuente": "Ciencia y Salud"
+      },
+      {
+        "titulo": "Tendencias en el mercado del café en 2025",
+        "descripcion": "El mercado del café sigue creciendo con nuevas variedades y técnicas de preparación que atraen a los consumidores.",
+        "categoria": "Economía",
+        "fuente": "Negocios Hoy"
+      },
+      {
+        "titulo": "Las mejores cafeterías del mundo según expertos",
+        "descripcion": "Una lista con las cafeterías más destacadas a nivel mundial para los amantes del café.",
+        "categoria": "Estilo de vida",
+        "fuente": "Viajero Moderno"
+      },
+      {
+        "titulo": "Nuevas variedades de café orgánico ganan popularidad",
+        "descripcion": "El café orgánico está ganando terreno entre los consumidores conscientes del medio ambiente.",
+        "categoria": "Sostenibilidad",
+        "fuente": "Sostenibilidad Global"
+      }
+    ]
+  }
