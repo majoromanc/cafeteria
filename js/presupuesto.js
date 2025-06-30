@@ -222,3 +222,25 @@ checkboxExtras.forEach((checkbox) => {
 });
 
 plazo.addEventListener('input', actualizarTotalFinal);
+
+ let precioBase = 20; 
+
+    const checkboxes = document.querySelectorAll('.checkbox-extra');
+    const precioFinalSpan = document.getElementById('precio-final');
+    const calcularBtn = document.getElementById('calcular-btn');
+
+    function calcularTotal() {
+      let total = precioBase;
+      checkboxes.forEach(cb => {
+        if (cb.checked) {
+          const parts = cb.value.split(':');
+          if (parts[1]) total += parseFloat(parts[1]);
+        }
+      });
+      precioFinalSpan.textContent = total;
+    }
+
+    checkboxes.forEach(cb => cb.addEventListener('change', calcularTotal));
+    calcularBtn.addEventListener('click', calcularTotal);
+
+    calcularTotal();
