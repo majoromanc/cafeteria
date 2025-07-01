@@ -1,246 +1,214 @@
+//VALIDACIÓN DATOS DE CONTACTO
 const formulario = document.getElementById("formulario");
-
 const nombre = document.getElementById("nombre");
 const apellido = document.getElementById("apellido");
 const telefono = document.getElementById("telefono");
 const email = document.getElementById("email");
-const plazo = document.getElementById("plazo");
+const privacidad = document.getElementById("privacidad");
 
 let valida = {
   nombre: false,
   apellido: false,
   telefono: false,
   email: false,
-}
+  privacidad: false
+};
 
-//Mensaje de error
-function setErrorFor(input, message){
-  //recibe como parametro input y mensaje
+function setErrorFor(input, message) {
   const formControl = input.parentElement;
-  const small = formControl.querySelector("small"); //selecciona donde esta escrito el mensaje
-  formControl.className = "form-control error"; //selecciona la clase de css
+  const small = formControl.querySelector("small");
+  formControl.classList.remove("success");
+  formControl.classList.add("error");
   small.innerText = message;
 }
 
-//si todo es correcto 
 function setSuccessFor(input) {
   const formControl = input.parentElement;
-  formControl.className = "form-control success";
+  formControl.classList.remove("error");
+  formControl.classList.add("success");
 }
 
+// Validación de Nombre
 nombre.addEventListener("blur", () => {
-  let name_re = /^[A-Za-z]{1,15}$/;
-
-  if (nombre.value === "" || nombre.value == null) {
+  let name_re = /^[A-Za-zÁÉÍÓÚáéíóúÜüÑñ]{1,15}$/;
+  if (nombre.value.trim() === "") {
     valida.nombre = false;
-    setErrorFor(nombre, "No se puede dejar el nombre vacío");
+    setErrorFor(nombre, "El nombre es obligatorio.");
+  } else if (!name_re.test(nombre.value.trim())) {
+    valida.nombre = false;
+    setErrorFor(nombre, "Solo letras, máximo 15 caracteres.");
   } else {
-    if (!name_re.test(nombre.value)) {
-      valida.nombre = false;
-      setErrorFor(nombre, "El nombre debe tener entre 1 a 15 caracteres y solo puede contener letras");
-    } else {
-      valida.nombre = true;
-      setSuccessFor(nombre);
-    }
+    valida.nombre = true;
+    setSuccessFor(nombre);
   }
 });
 
+// Validación de Apellidos
 apellido.addEventListener("blur", () => {
-  let apellido_re = /^[A-Za-z ]{1,40}$/;
-
-  if (apellido.value === "" || apellido.value == null) {
+  let apellido_re = /^[A-Za-zÁÉÍÓÚáéíóúÜüÑñ ]{1,40}$/;
+  if (apellido.value.trim() === "") {
     valida.apellido = false;
-    setErrorFor(apellido, "No se puede dejar el apellido vacío");
+    setErrorFor(apellido, "El apellido es obligatorio.");
+  } else if (!apellido_re.test(apellido.value.trim())) {
+    valida.apellido = false;
+    setErrorFor(apellido, "Solo letras, máximo 40 caracteres.");
   } else {
-    if (!apellido_re.test(apellido.value)) {
-      valida.apellido = false;
-      setErrorFor(apellido, "El apellido debe tener entre 1 a 40 caracteres y solo puede contener letras");
-    } else {
-      valida.apellido = true;
-      setSuccessFor(apellido);
-    }
+    valida.apellido = true;
+    setSuccessFor(apellido);
   }
 });
 
+// Validación de Teléfono
 telefono.addEventListener("blur", () => {
   let telefono_re = /^[0-9]{9}$/;
-
-  if (telefono.value === "" || telefono.value == null) {
+  if (telefono.value.trim() === "") {
     valida.telefono = false;
-    setErrorFor(telefono, "No se puede dejar el teléfono vacío");
+    setErrorFor(telefono, "El teléfono es obligatorio.");
+  } else if (!telefono_re.test(telefono.value.trim())) {
+    valida.telefono = false;
+    setErrorFor(telefono, "Debe tener 9 dígitos numéricos.");
   } else {
-    if (!telefono_re.test(telefono.value)) {
-      valida.telefono = false;
-      setErrorFor(telefono, "El teléfono debe tener 9 dígitos y solo puede contener números");
-    } else {
-      valida.telefono = true;
-      setSuccessFor(telefono);
-    }
+    valida.telefono = true;
+    setSuccessFor(telefono);
   }
 });
 
+// Validación de Email
 email.addEventListener("blur", () => {
-  let email_re = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/;
-
-  if (email.value === "" || email.value == null) {
+  let email_re = /^[\w-]+(\.[\w-]+)*@[\w-]+(\.[\w-]+)+$/;
+  if (email.value.trim() === "") {
     valida.email = false;
-    setErrorFor(email, "No se puede dejar el correo vacío");
+    setErrorFor(email, "El correo es obligatorio.");
+  } else if (!email_re.test(email.value.trim())) {
+    valida.email = false;
+    setErrorFor(email, "Correo electrónico no válido.");
   } else {
-    if (!email_re.test(email.value)) {
-      valida.email = false;
-      setErrorFor(email, "Debe ser un correo válido");
-    } else {
-      valida.email = true;
-      setSuccessFor(email);
-    }
+    valida.email = true;
+    setSuccessFor(email);
   }
 });
 
-formulario.addEventListener("submit", (e) => {
-  e.preventDefault();
-
-  let errorV = false;
-
-  for (const property in valida) {
-    if (valida[property] === false) {
-      errorV = true;
-    }
-  }
-
-  if (!errorV) {
-    if (carrito.length === 0) {
-      alert("Debes añadir al menos un producto al carrito");
-      return;
-    }
-    formulario.submit();
-  }
+// Validación de privacidad
+privacidad.addEventListener("change", () => {
+  valida.privacidad = privacidad.checked;
 });
 
-//Array para almacenar los productos
+//PRESUPUESTO 
+const selectProducto = document.getElementById('seleccion-producto');
+const btnAñadir = document.getElementById('añadir-al-carrito');
+const contenedorCarrito = document.getElementById('articulos-carrito');
+const checkboxesExtras = document.querySelectorAll('.checkbox-extra');
+const inputPlazo = document.getElementById('plazo');
+const totalFinal = document.getElementById('total-final');
+const btnReset = document.getElementById('borrar');
+
 let carrito = [];
 
-//Elementos del DOM
-const selectorProductos = document.getElementById("seleccion-producto");
-const botonAniadir = document.getElementById("añadir-al-carrito");
-const contenedorArticulosCarrito = document.getElementById("articulos-carrito");
-const elementoTotalFinal = document.getElementById("total-final");
-
-//Evento agregar producto al carrito
-botonAniadir.addEventListener("click", () => {
-  const opcionSeleccionada = selectorProductos.options[selectorProductos.selectedIndex];
-  const valorSeleccionado = opcionSeleccionada.value;
-
-  if (!valorSeleccionado) {
+// Añadir producto al carrito
+btnAñadir.addEventListener("click", () => {
+  const valor = selectProducto.value;
+  if (!valor) {
     alert("Debes seleccionar un producto");
     return;
   }
-  const [nombreProducto, precioProducto] = valorSeleccionado.split(":");
+  const [nombreProducto, precioProducto] = valor.split(":");
   const precio = parseFloat(precioProducto);
-
-  //Agregar producto al carrito
   carrito.push({ nombre: nombreProducto, precio });
-
   actualizarCarrito();
 });
 
-//Actualizar carrito
+// Mostrar productos en el carrito
 function actualizarCarrito() {
-  //Limpiar contenido previo
-  contenedorArticulosCarrito.innerHTML = '';
-
-  let total = 0;
-
-  //Mostrar productos
-  carrito.forEach((producto, index) => {
-    total += producto.precio;
-
-    const articuloCarrito = document.createElement('div');
-    articuloCarrito.classList.add('articulo-carrito');
-    articuloCarrito.innerHTML = `
-      ${producto.nombre} - ${producto.precio.toFixed(2)}€
-      <button class='eliminar-articulo' data-index='${index}'>Eliminar</button>
+  contenedorCarrito.innerHTML = '';
+  if (carrito.length === 0) {
+    contenedorCarrito.innerHTML = '<p>No hay productos en el carrito.</p>';
+    calcularPresupuesto();
+    return;
+  }
+  carrito.forEach((item, idx) => {
+    const div = document.createElement('div');
+    div.classList.add('producto-carrito');
+    div.innerHTML = `
+      <span>${item.nombre} - ${item.precio.toFixed(2)}€</span>
+      <button type="button" class="eliminar-item" data-idx="${idx}" title="Quitar del carrito">❌</button>
     `;
-    contenedorArticulosCarrito.appendChild(articuloCarrito);
+    contenedorCarrito.appendChild(div);
   });
-
-  //Funcionalidad para eliminar productos
-  document.querySelectorAll('.eliminar-articulo').forEach((boton) => {
-    boton.addEventListener('click', (e) => {
-      const index = e.target.dataset.index;
-      eliminarArticulo(index);
+  document.querySelectorAll('.eliminar-item').forEach(btn => {
+    btn.addEventListener('click', (e) => {
+      const idx = parseInt(e.target.getAttribute('data-idx'));
+      carrito.splice(idx, 1);
+      actualizarCarrito();
     });
   });
-
-  actualizarTotalFinal();
+  calcularPresupuesto();
 }
 
-//Eliminar productos del carrito
-function eliminarArticulo(index) {
-  //Eliminar producto
-  carrito.splice(index, 1);
+// Calcular el presupuesto total (con descuento por plazo)
+function calcularPresupuesto() {
+  let totalProductos = carrito.reduce((acc, prod) => acc + prod.precio, 0);
+  let totalExtras = Array.from(checkboxesExtras)
+    .filter(cb => cb.checked)
+    .reduce((acc, cb) => acc + parseFloat(cb.value.split(':')[1]), 0);
 
-  //Actualizar carrito
-  actualizarCarrito();
-}
+  let meses = parseInt(inputPlazo.value, 10);
+  if (isNaN(meses) || meses < 1) meses = 1;
 
-//Calcular precio final
-function actualizarTotalFinal() {
-  let total = carrito.reduce((suma, item) => suma + item.precio, 0);
-
-  //Sumar precio de los extras seleccionados
-  const extrasSeleccionados = document.querySelectorAll(".checkbox-extra:checked");
-  extrasSeleccionados.forEach((checkbox) => {
-    const [, precioExtra] = checkbox.value.split(':');
-    total += parseFloat(precioExtra);
-  });
-
-  //Aplicar descuento según el plazo
-  const plazoValue = parseInt(plazo.value, 10);
-  if (!isNaN(plazoValue) && plazoValue > 0) {
-    const descuento = calcularDescuento(plazoValue);
-    total -= descuento;
-  }
-
-  elementoTotalFinal.textContent = `Total final: ${total.toFixed(2)}€`;
-}
-
-//Calcular descuento según el plazo
-function calcularDescuento(plazo) {
+  let subtotal = (totalProductos + totalExtras) * meses;
   let descuento = 0;
-  if (plazo >= 1 && plazo <= 30) {
-    descuento = 5; // Descuento de 5€ si el plazo es de 1 a 30 días
-  } else if (plazo > 30) {
-    descuento = 10; // Descuento de 10€ si el plazo es mayor a 30 días
+
+  // Descuento 10% si el plazo es >= 12 meses, 5% si >= 6 meses
+  if (meses >= 12) {
+    descuento = subtotal * 0.10;
+  } else if (meses >= 6) {
+    descuento = subtotal * 0.05;
   }
-  return descuento;
+
+  let total = subtotal - descuento;
+  totalFinal.textContent = `Total final ${total.toFixed(2)}€${descuento > 0 ? ` (descuento aplicado: -${descuento.toFixed(2)}€)` : ''}`;
 }
 
-//Evento para actualizar el total al seleccionar/deseleccionar los extras y al cambiar el plazo
-const checkboxExtras = document.querySelectorAll('.checkbox-extra');
-checkboxExtras.forEach((checkbox) => {
-  checkbox.addEventListener('change', actualizarTotalFinal);
+// Eventos para recalcular presupuesto
+checkboxesExtras.forEach(cb => cb.addEventListener('change', calcularPresupuesto));
+inputPlazo.addEventListener('input', calcularPresupuesto);
+
+// Reset
+btnReset.addEventListener('click', () => {
+  carrito = [];
+  setTimeout(() => {
+    actualizarCarrito();
+    checkboxesExtras.forEach(cb => cb.checked = false);
+    inputPlazo.value = '';
+    totalFinal.textContent = `Total final 0€`;
+  }, 10);
 });
 
-plazo.addEventListener('input', actualizarTotalFinal);
+// Validación final al enviar el formulario
+formulario.addEventListener("submit", (e) => {
+  // Revalidar privacidad
+  valida.privacidad = privacidad.checked;
+  // Revalidar los campos en caso de que no se haya hecho blur
+  nombre.dispatchEvent(new Event('blur'));
+  apellido.dispatchEvent(new Event('blur'));
+  telefono.dispatchEvent(new Event('blur'));
+  email.dispatchEvent(new Event('blur'));
 
- let precioBase = 20; 
+  let error = false;
+  for (const campo in valida) {
+    if (!valida[campo]) error = true;
+  }
+  if (error) {
+    e.preventDefault();
+    alert("Por favor, corrige los errores en los datos de contacto y acepta la privacidad.");
+    return;
+  }
+  if (carrito.length === 0) {
+    e.preventDefault();
+    alert("Debes añadir al menos un producto al carrito.");
+    return;
+  }
+});
 
-    const checkboxes = document.querySelectorAll('.checkbox-extra');
-    const precioFinalSpan = document.getElementById('precio-final');
-    const calcularBtn = document.getElementById('calcular-btn');
-
-    function calcularTotal() {
-      let total = precioBase;
-      checkboxes.forEach(cb => {
-        if (cb.checked) {
-          const parts = cb.value.split(':');
-          if (parts[1]) total += parseFloat(parts[1]);
-        }
-      });
-      precioFinalSpan.textContent = total;
-    }
-
-    checkboxes.forEach(cb => cb.addEventListener('change', calcularTotal));
-    calcularBtn.addEventListener('click', calcularTotal);
-
-    calcularTotal();
+// Inicializar
+actualizarCarrito();
+calcularPresupuesto();
