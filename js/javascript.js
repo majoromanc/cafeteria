@@ -1,36 +1,43 @@
-
 document.addEventListener('DOMContentLoaded', function() {
-    // Función para cargar el archivo de noticias
     function loadNews(url) {
-        const xhr = new XMLHttpRequest(); // Crea una nueva instancia de XMLHttpRequest
-        xhr.open('GET', url, true); // Configura la solicitud para obtener datos de la URL especificada
-        xhr.onreadystatechange = function() {
-            // Verifica si la solicitud se ha completado y fue exitosa
-            if (xhr.readyState === 4 && xhr.status === 200) {
-                const newsData = JSON.parse(xhr.responseText); // Convierte la respuesta de texto en un objeto JSON
-                displayNews(newsData); // Llama a la función displayNews para mostrar las noticias
-            }
-        };
-        xhr.send(); // Envía la solicitud
+        fetch(url)
+            .then(response => {
+                if (!response.ok) throw new Error("No se encontró el archivo de noticias: " + response.statusText);
+                return response.json();
+            })
+            .then(newsData => {
+                displayNews(newsData);
+            })
+            .catch(error => {
+                const container = document.getElementById('noticiasnews');
+                if (container) {
+                    container.innerHTML = "<p>No se pudieron cargar las noticias.</p>";
+                }
+                console.error("Error cargando noticias:", error);
+            });
     }
 
-    // Función para mostrar las noticias
     function displayNews(data) {
-        const noticiasContainer = document.getElementById('noticiasnews'); // Selecciona el elemento donde se mostrarán las noticias
-        data.noticias.forEach(noticia => {
-            const newsItem = document.createElement('div'); // Crea un nuevo elemento <div> para la noticia
-            newsItem.className = 'news-item'; // Asigna la clase 'news-item' al <div>
-            newsItem.innerHTML = `
-                <h3>${noticia.titulo}</h3>
-                <p>${noticia.descripcion}</p>
-                <p><strong>Categoría:</strong> ${noticia.categoria}</p>
-                <p><strong>Fuente:</strong> ${noticia.fuente}</p>
-            `; // Establece el contenido HTML del <div> con el título, descripción, categoría y fuente
-            noticiasContainer.appendChild(newsItem); // Añade el <div> al elemento noticiasContainer en el DOM
-        });
+        const noticiasContainer = document.getElementById('noticiasnews');
+        if (!noticiasContainer) return;
+        noticiasContainer.innerHTML = "";
+        if (data.noticias && Array.isArray(data.noticias) && data.noticias.length > 0) {
+            data.noticias.forEach(noticia => {
+                const newsItem = document.createElement('div');
+                newsItem.className = 'news-item';
+                newsItem.innerHTML = `
+                    <h4>${noticia.titulo}</h4>
+                    <p>${noticia.descripcion}</p>
+                    <p><strong>Categoría:</strong> ${noticia.categoria}</p>
+                    <p><strong>Fuente:</strong> ${noticia.fuente}</p>
+                `;
+                noticiasContainer.appendChild(newsItem);
+            });
+        } else {
+            noticiasContainer.innerHTML = "<p>No hay noticias disponibles.</p>";
+        }
     }
 
-    // Cargar el archivo de noticias al cargar la página
-    loadNews('/data/news.json'); // Reemplaza '/data/news.json' con la ruta a tu archivo de noticias
+    // Cargar noticias desde el archivo JSON
+    loadNews('data/new.json');
 });
-

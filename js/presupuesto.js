@@ -102,47 +102,78 @@ const inputPlazo = document.getElementById('plazo');
 const totalFinal = document.getElementById('total-final');
 const btnReset = document.getElementById('borrar');
 
-let carrito = [];
+function actualizarCarrito() {
+  const articulosCarrito = document.getElementById('articulos-carrito');
+  const selectProducto = document.getElementById('seleccion-producto');
+  const checkboxesExtras = document.querySelectorAll('.checkbox-extra');
+  let html = '<ul>';
+  let hayItems = false;
 
-// Añadir producto al carrito
-btnAñadir.addEventListener("click", () => {
-  const valor = selectProducto.value;
-  if (!valor) {
-    alert("Debes seleccionar un producto");
-    return;
+  // Producto seleccionado
+  const productoValue = selectProducto.value;
+  if (productoValue && productoValue.includes(':')) {
+    const [nombre, precio] = productoValue.split(':');
+    html += `<li>${nombre} - ${parseFloat(precio).toFixed(2)}€</li>`;
+    hayItems = true;
   }
-  const [nombreProducto, precioProducto] = valor.split(":");
-  const precio = parseFloat(precioProducto);
-  carrito.push({ nombre: nombreProducto, precio });
+
+  // Extras seleccionados
+  checkboxesExtras.forEach(cb => {
+    if (cb.checked) {
+      const [nombre, precio] = cb.value.split(':');
+      html += `<li>${nombre} - ${parseFloat(precio).toFixed(2)}€</li>`;
+      hayItems = true;
+    }
+  });
+
+  html += '</ul>';
+  articulosCarrito.innerHTML = hayItems ? html : '<p>No hay productos seleccionados.</p>';
+}
+
+// Escucha los cambios en producto y extras
+document.addEventListener('DOMContentLoaded', function() {
+  const selectProducto = document.getElementById('seleccion-producto');
+  const checkboxesExtras = document.querySelectorAll('.checkbox-extra');
+  selectProducto.addEventListener('change', actualizarCarrito);
+  checkboxesExtras.forEach(cb => cb.addEventListener('change', actualizarCarrito));
   actualizarCarrito();
 });
 
-// Mostrar productos en el carrito
-function actualizarCarrito() {
-  contenedorCarrito.innerHTML = '';
-  if (carrito.length === 0) {
-    contenedorCarrito.innerHTML = '<p>No hay productos en el carrito.</p>';
-    calcularPresupuesto();
-    return;
-  }
-  carrito.forEach((item, idx) => {
-    const div = document.createElement('div');
-    div.classList.add('producto-carrito');
-    div.innerHTML = `
-      <span>${item.nombre} - ${item.precio.toFixed(2)}€</span>
-      <button type="button" class="eliminar-item" data-idx="${idx}" title="Quitar del carrito">❌</button>
-    `;
-    contenedorCarrito.appendChild(div);
-  });
-  document.querySelectorAll('.eliminar-item').forEach(btn => {
-    btn.addEventListener('click', (e) => {
-      const idx = parseInt(e.target.getAttribute('data-idx'));
-      carrito.splice(idx, 1);
-      actualizarCarrito();
+let carrito = [];
+
+document.addEventListener('DOMContentLoaded', function() {
+  const selectProducto = document.getElementById('seleccion-producto');
+  const checkboxes = document.querySelectorAll('.checkbox-extra');
+  const totalFinal = document.getElementById('total-final');
+
+  function actualizarTotal() {
+    let total = 0;
+
+    // Suma el precio del producto seleccionado
+    const valor = selectProducto.value;
+    if (valor && valor.includes(':')) {
+      const precio = parseFloat(valor.split(':')[1]);
+      if (!isNaN(precio)) total += precio;
+    }
+
+    // Suma los extras seleccionados
+    checkboxes.forEach(chk => {
+      if (chk.checked) {
+        const extra = chk.value.split(':')[1];
+        const precioExtra = parseFloat(extra);
+        if (!isNaN(precioExtra)) total += precioExtra;
+      }
     });
-  });
-  calcularPresupuesto();
-}
+
+    totalFinal.textContent = `Total final ${total.toFixed(2)}€`;
+  }
+
+  selectProducto.addEventListener('change', actualizarTotal);
+  checkboxes.forEach(chk => chk.addEventListener('change', actualizarTotal));
+
+  // Al cargar la página, muestra el total actual
+  actualizarTotal();
+});
 
 // Calcular el presupuesto total (con descuento por plazo)
 function calcularPresupuesto() {
