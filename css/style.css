@@ -370,24 +370,21 @@ min-height: 100vh;
 }
 
 .category-moca {
-	background-image: linear-gradient(#00000080, #00000080),
-		url('../imagenes/moca-category.png');
+	background-color: var(--primary-color);
 	background-size: cover;
 	background-position: bottom;
 	background-repeat: no-repeat;
 }
 
 .category-capuchino {
-	background-image: linear-gradient(#00000080, #00000080),
-		url('../imagenes/capuchino-category.png');
+	background-color: var(--primary-color);
 	background-size: cover;
 	background-position: center;
 	background-repeat: no-repeat;
 }
 
 .category-expreso {
-	background-image: linear-gradient(#00000080, #00000080),
-		url('../imagenes/expreso-category.png');
+	background-color:var(--primary-color);
 	background-size: cover;
 	background-position: center;
 	background-repeat: no-repeat;
